@@ -16,15 +16,15 @@ def difficulty_guesses():
     print ("__ CHOOSE THE DIFFICULTY OF THE GAME __")
     print ("1    -->     EASY [09 GUESSES]\n2    -->     MEDIUM [06 GUESSES]\n3    -->     HARD [3 GUESSES]\n")
 
-    game_difficulty = {"1": 9, "2": 6, "3": 3} # guesses
+    game_difficulty = {"1": 9, "2": 6, "3": 3}  # guesses
 
     # Validate
     while True:
         user_difficulty = input("Your choice:   ")
-        if user_difficulty in game_difficulty:
-            print ("Invalid Choice! Just numbers 1, 2 or 3.") # invalid
+        if user_difficulty not in game_difficulty:
+            print ("Invalid Choice! Just numbers 1, 2 or 3.")  # invalid
         else:
-            return game_difficulty[user_difficulty] # valid
+            return game_difficulty[user_difficulty]  # valid
 
 
 # Choose Category
@@ -32,15 +32,72 @@ def category_word():
     print ("__ CHOOSE THE SUBJECT OF THE WORDS __")
     print (list(words.keys()))
 
-    # Validade
+    # Validate
     while True:
         user_category = input("Your choice:   ").title()
         if user_category not in words.keys():
-            print ("Invalid Category! Try again.") # invalid
+            print ("Invalid Category! Try again.")  # invalid
         else:
-            break # valid
+            break  # valid
 
     game_random_word = random.choice(words[user_category])  # Get random word inside the subject
-    game_encrypted_word = " ".join("_" for _ in game_random_word)  # Encrypt it
+    game_encrypted_word = ["_" if char.isalpha() else char for char in game_random_word]
 
     return game_random_word, game_encrypted_word
+
+
+# Update Encrypted Word
+def update_encrypted_word(word, encrypted_word, guessed_letter):
+    for i in range(len(word)):
+        if word[i].upper() == guessed_letter.upper():
+            encrypted_word[i] = word[i]  # Reveal the letter
+
+    return encrypted_word  # Return the updated encrypted word as a list
+
+
+# Main game
+def play_hangman():
+    attempts = difficulty_guesses()
+    word, encrypted_word = category_word()
+    guessed_letters = []
+
+    while attempts > 0:
+        print("\nCurrent word:", " ".join(encrypted_word))  # Displaying spaces correctly
+        print("Guessed letters:", ", ".join(guessed_letters) if guessed_letters else "None")
+        print("Incorrect guesses remaining:", attempts)
+
+        # Check if the word has been completely guessed
+        if "_" not in encrypted_word:
+            print("\nCongratulations! You guessed the word:", word)
+            return encrypted_word, guessed_letters, attempts  # Game over after guessing correctly
+
+        guess = input("Guess a letter: ").upper()
+
+        # Validate input
+        if len(guess) != 1 or not guess.isalpha():
+            print("Invalid input! Please enter a single letter.")
+            continue
+
+        # Prevent repeated guesses
+        if guess in guessed_letters:
+            print(f"You already guessed '{guess}'. Try again.")
+            continue
+
+        guessed_letters.append(guess)
+
+        if guess in word.upper():
+            print(f"Good job! '{guess}' is in the word.")
+            encrypted_word[:] = update_encrypted_word(word, encrypted_word, guess)  # Update in place
+        else:
+            print(f"Sorry, '{guess}' is not in the word.")
+            attempts -= 1
+
+        # At the end of the game, correctly print the final word format
+        print("\nGame Over! The word was:", word)
+        print("Final word progress:", " ".join(encrypted_word))  # Ensure it's displayed correctly
+
+    return encrypted_word, guessed_letters, attempts  # Return values even if game ends
+
+# __ NOTEPAD __
+# The choice() method returns a randomly selected element from the specified sequence.: https://www.w3schools.com/python/ref_random_choice.asp
+# The join() method takes all items in an iterable and joins them into one string.: https://www.w3schools.com/python/ref_string_join.asp
