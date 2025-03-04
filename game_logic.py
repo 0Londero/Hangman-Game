@@ -16,7 +16,7 @@ def difficulty_guesses():
     print ("__ CHOOSE THE DIFFICULTY OF THE GAME __")
     print ("1    -->     EASY [09 GUESSES]\n2    -->     MEDIUM [06 GUESSES]\n3    -->     HARD [3 GUESSES]\n")
 
-    game_difficulty = {"1": 9, "2": 6, "3": 3}  # guesses
+    game_difficulty = {"1": 9, "2": 6, "3": 3}  # Choose the game difficulty using a dictionary and the keys
 
     # Validate
     while True:
@@ -30,7 +30,7 @@ def difficulty_guesses():
 # Choose Category
 def category_word():
     print ("__ CHOOSE THE SUBJECT OF THE WORDS __")
-    print (list(words.keys()))
+    print (list(words.keys())) # print all the words in list
 
     # Validate
     while True:
@@ -92,11 +92,10 @@ def play_hangman():
             print(f"Sorry, '{guess}' is not in the word.")
             attempts -= 1
 
-        # At the end of the game, correctly print the final word format
         print("\nGame Over! The word was:", word)
-        print("Final word progress:", " ".join(encrypted_word))  # Ensure it's displayed correctly
+        print("Final word progress:", " ".join(encrypted_word))
 
-    return encrypted_word, guessed_letters, attempts  # Return values even if game ends
+    return encrypted_word, guessed_letters, attempts
 
 # __ NOTEPAD __
 # The choice() method returns a randomly selected element from the specified sequence.: https://www.w3schools.com/python/ref_random_choice.asp
